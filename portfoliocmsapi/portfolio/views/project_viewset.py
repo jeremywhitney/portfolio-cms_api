@@ -1,9 +1,11 @@
 from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
 from ..models import Project
 from ..serializers.project_serializer import ProjectSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
