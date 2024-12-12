@@ -5,7 +5,7 @@ from ..models import Project
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    # user = UserSerializer(read_only=True, fields=['id', 'first_name', 'last_name'])
+    user = serializers.SerializerMethodField()
     tag = TagSerializer(many=True, read_only=True)
     tech_stack = TechStackSerializer(many=True, read_only=True)
 
@@ -13,7 +13,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = [
             "id",
-            "user",  # Update to use a nested object displaying 'id', 'first_name', 'last_name' once UserSerializer is created
+            "user",
             "title",
             "description",
             "status",
@@ -24,3 +24,9 @@ class ProjectSerializer(serializers.ModelSerializer):
             "date_created",
             "last_update",
         ]
+
+    def get_user(self, obj):
+        return {
+            "id": obj.user.id,
+            "full_name": f"{obj.user.first_name} {obj.user.last_name}".strip(),
+        }

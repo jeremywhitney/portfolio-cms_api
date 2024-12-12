@@ -10,6 +10,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
+    def perform_create(self, serializer):
+        instance = serializer.save()
+
+        # Handle initial tags if included
+        tag_ids = self.request.data.get("tag", [])
+        if tag_ids:
+            # Validate tags exist
+            for tag_id in tag_ids:
+                if not Tag.objects.filter(id=tag_id).exists():
+                    raise ValidationError(f"Tag with id {tag_id} does not exist")
+            # Add tags
+            instance.tag.add(*tag_ids)
+
+        # Handle initial tech stack if included
+        tech_stack_ids = self.request.data.get("tech_stack", [])
+        if tech_stack_ids:
+            # Validate tech stack items exist
+            for tech_id in tech_stack_ids:
+                if not TechStack.objects.filter(id=tech_id).exists():
+                    raise ValidationError(
+                        f"Tech Stack with id {tech_id} does not exist"
+                    )
+            # Add tech stack items
+            instance.tech_stack.add(*tech_stack_ids)
+
     def perform_update(self, serializer):
         instance = serializer.save()
 
