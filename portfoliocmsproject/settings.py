@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "portfoliocmsapi.projects",
     "portfoliocmsapi.blog",
-    "portfoliocmsapi.users",
+    "portfoliocmsapi.auth",
 ]
 
 REST_FRAMEWORK = {
