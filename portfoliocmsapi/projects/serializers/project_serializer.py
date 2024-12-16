@@ -1,11 +1,14 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
+from ..models import Project
 from .tag_serializer import TagSerializer
 from .tech_stack_serializer import TechStackSerializer
-from ..models import Project
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), read_only=False
+    )
     tag = TagSerializer(many=True, read_only=True)
     tech_stack = TechStackSerializer(many=True, read_only=True)
 
@@ -25,8 +28,10 @@ class ProjectSerializer(serializers.ModelSerializer):
             "last_update",
         ]
 
-    def get_user(self, obj):
-        return {
-            "id": obj.user.id,
-            "full_name": f"{obj.user.first_name} {obj.user.last_name}".strip(),
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret["user"] = {
+            "id": instance.user.id,
+            "full_name": f"{instance.user.first_name} {instance.user.last_name}".strip(),
         }
+        return ret

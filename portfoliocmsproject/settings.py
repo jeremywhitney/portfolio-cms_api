@@ -28,8 +28,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    "portfoliocmsapi.portfolio",
-    "portfoliocmsapi.cms",
+    "portfoliocmsapi.projects",
+    "portfoliocmsapi.blog",
     "portfoliocmsapi.users",
 ]
 
