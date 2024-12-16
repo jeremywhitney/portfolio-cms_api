@@ -1,6 +1,6 @@
 from rest_framework import routers
 from django.urls import path
-from portfoliocmsapi.auth.views import *
+from portfoliocmsapi.users.views import *
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", UserViewSet, "user")
