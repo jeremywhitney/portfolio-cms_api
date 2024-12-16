@@ -1,5 +1,5 @@
 from rest_framework import routers
-from portfoliocmsapi.portfolio.views import *
+from portfoliocmsapi.projects.views import *
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"tags", TagViewSet, "tag")
