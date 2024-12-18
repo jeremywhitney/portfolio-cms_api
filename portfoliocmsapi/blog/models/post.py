@@ -7,7 +7,7 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     content = models.TextField()
-    project = models.ForeignKey(
+    project = models.ManyToManyField(
         Project, blank=True, null=True, on_delete=models.CASCADE
     )
     tag = models.ManyToManyField(Tag, through="PostTag")
