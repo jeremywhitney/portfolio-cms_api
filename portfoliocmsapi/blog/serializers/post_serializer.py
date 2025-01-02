@@ -38,9 +38,8 @@ class PostSerializer(serializers.ModelSerializer):
             "id": instance.user.id,
             "full_name": f"{instance.user.first_name} {instance.user.last_name}".strip(),
         }
-        if instance.project:
-            ret["project"] = {
-                "id": instance.project.id,
-                "title": instance.project.title,
-            }
+        ret["project"] = [
+            {"id": project.id, "title": project.title}
+            for project in instance.project.all()
+        ]
         return ret
