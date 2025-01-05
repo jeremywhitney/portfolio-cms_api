@@ -1,0 +1,20 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$HduVz1U1ODzWcLb8NoL8Jx$/KtEK1UUrD9yBQKeIg0oj4oEaJd3z6HmxDEVTvWOKvs=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "jwhitney",
+    "first_name": "Jeremy",
+    "last_name": "Whitney",
+    "email": "bearwhitness@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-01-02T19:41:16.371Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

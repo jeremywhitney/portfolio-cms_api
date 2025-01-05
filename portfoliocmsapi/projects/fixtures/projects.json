@@ -1,0 +1,16 @@
+[
+{
+  "model": "projects.project",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "title": "Portfolio CMS",
+    "description": "A dynamic portfolio and CMS built with Django REST Framework and React",
+    "status": "in_development",
+    "repo_url": "https://github.com/jeremywhitney/portfolio-cms_api",
+    "deploy_url": "",
+    "date_created": "2024-12-09T12:00:00Z",
+    "last_update": "2024-12-12T12:00:00Z"
+  }
+}
+]

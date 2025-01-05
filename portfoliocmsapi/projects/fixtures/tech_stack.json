@@ -1,0 +1,58 @@
+[
+{
+  "model": "projects.techstack",
+  "pk": 1,
+  "fields": {
+    "name": "Python"
+  }
+},
+{
+  "model": "projects.techstack",
+  "pk": 2,
+  "fields": {
+    "name": "Django"
+  }
+},
+{
+  "model": "projects.techstack",
+  "pk": 3,
+  "fields": {
+    "name": "JavaScript"
+  }
+},
+{
+  "model": "projects.techstack",
+  "pk": 4,
+  "fields": {
+    "name": "TypeScript"
+  }
+},
+{
+  "model": "projects.techstack",
+  "pk": 5,
+  "fields": {
+    "name": "React"
+  }
+},
+{
+  "model": "projects.techstack",
+  "pk": 6,
+  "fields": {
+    "name": "HTML"
+  }
+},
+{
+  "model": "projects.techstack",
+  "pk": 7,
+  "fields": {
+    "name": "CSS"
+  }
+},
+{
+  "model": "projects.techstack",
+  "pk": 8,
+  "fields": {
+    "name": "SQLite"
+  }
+}
+]

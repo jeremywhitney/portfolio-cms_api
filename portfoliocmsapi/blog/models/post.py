@@ -7,9 +7,7 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     content = models.TextField()
-    project = models.ManyToManyField(
-        Project, blank=True, null=True, on_delete=models.CASCADE
-    )
+    project = models.ManyToManyField(Project, blank=True)
     tag = models.ManyToManyField(Tag, through="PostTag")
     tech_stack = models.ManyToManyField(TechStack, through="PostTechStack")
     date_created = models.DateTimeField()

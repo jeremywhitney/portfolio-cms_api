@@ -1,0 +1,44 @@
+[
+{
+  "model": "blog.post",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "title": "Introduction to My Portfolio CMS",
+    "content": "Here's how I built this portfolio and CMS system...",
+    "date_created": "2024-12-16T12:00:00Z",
+    "last_update": "2024-12-16T12:00:00Z",
+    "project": [
+      1
+    ]
+  }
+},
+{
+  "model": "blog.post",
+  "pk": 4,
+  "fields": {
+    "user": 1,
+    "title": "Building with Django REST Framework",
+    "content": "Let me show you how I used DRF to build the API...",
+    "date_created": "2024-12-16T13:00:00Z",
+    "last_update": "2024-12-16T13:00:00Z",
+    "project": [
+      1
+    ]
+  }
+},
+{
+  "model": "blog.post",
+  "pk": 6,
+  "fields": {
+    "user": 1,
+    "title": "Using Django's ManyToMany Fields",
+    "content": "Here's what I learned about ManyToMany relationships in Django...",
+    "date_created": "2024-12-16T14:00:00Z",
+    "last_update": "2024-12-16T14:00:00Z",
+    "project": [
+      1
+    ]
+  }
+}
+]

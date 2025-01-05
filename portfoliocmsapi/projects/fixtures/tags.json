@@ -1,0 +1,30 @@
+[
+{
+  "model": "projects.tag",
+  "pk": 1,
+  "fields": {
+    "name": "Backend"
+  }
+},
+{
+  "model": "projects.tag",
+  "pk": 2,
+  "fields": {
+    "name": "Frontend"
+  }
+},
+{
+  "model": "projects.tag",
+  "pk": 3,
+  "fields": {
+    "name": "DevOps"
+  }
+},
+{
+  "model": "projects.tag",
+  "pk": 4,
+  "fields": {
+    "name": "Full Stack"
+  }
+}
+]

@@ -13,7 +13,8 @@ class PostSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(), read_only=False
     )
     project = serializers.PrimaryKeyRelatedField(
-        queryset=Project.objects.all(), allow_null=True, required=False
+        many=True,
+        read_only=True,
     )
     tag = TagSerializer(many=True, read_only=True)
     tech_stack = TechStackSerializer(many=True, read_only=True)
@@ -38,9 +39,8 @@ class PostSerializer(serializers.ModelSerializer):
             "id": instance.user.id,
             "full_name": f"{instance.user.first_name} {instance.user.last_name}".strip(),
         }
-        if instance.project:
-            ret["project"] = {
-                "id": instance.project.id,
-                "title": instance.project.title,
-            }
+        ret["project"] = [
+            {"id": project.id, "title": project.title}
+            for project in instance.project.all()
+        ]
         return ret

@@ -1,0 +1,58 @@
+[
+{
+  "model": "blog.posttechstack",
+  "pk": 1,
+  "fields": {
+    "post": 4,
+    "tech_stack": 8
+  }
+},
+{
+  "model": "blog.posttechstack",
+  "pk": 2,
+  "fields": {
+    "post": 4,
+    "tech_stack": 1
+  }
+},
+{
+  "model": "blog.posttechstack",
+  "pk": 3,
+  "fields": {
+    "post": 4,
+    "tech_stack": 2
+  }
+},
+{
+  "model": "blog.posttechstack",
+  "pk": 16,
+  "fields": {
+    "post": 1,
+    "tech_stack": 1
+  }
+},
+{
+  "model": "blog.posttechstack",
+  "pk": 17,
+  "fields": {
+    "post": 1,
+    "tech_stack": 2
+  }
+},
+{
+  "model": "blog.posttechstack",
+  "pk": 21,
+  "fields": {
+    "post": 6,
+    "tech_stack": 1
+  }
+},
+{
+  "model": "blog.posttechstack",
+  "pk": 22,
+  "fields": {
+    "post": 6,
+    "tech_stack": 2
+  }
+}
+]
