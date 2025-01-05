@@ -13,7 +13,8 @@ class PostSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(), read_only=False
     )
     project = serializers.PrimaryKeyRelatedField(
-        queryset=Project.objects.all(), allow_null=True, required=False
+        many=True,
+        read_only=True,
     )
     tag = TagSerializer(many=True, read_only=True)
     tech_stack = TechStackSerializer(many=True, read_only=True)
