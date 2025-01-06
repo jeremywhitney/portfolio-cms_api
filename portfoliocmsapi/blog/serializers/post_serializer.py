@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from ..models import Post
-from portfoliocmsapi.projects.models import Project
 from portfoliocmsapi.projects.serializers import (
     TagSerializer,
     TechStackSerializer,
