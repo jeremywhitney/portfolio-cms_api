@@ -1,4 +1,4 @@
-# pytest configuration file
+"""Helper code and fixtures that support pytest test execution."""
 
 import os
 import sys

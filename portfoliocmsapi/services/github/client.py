@@ -1,5 +1,3 @@
-# Handles raw GitHub API communication
-
 import requests
 from django.conf import settings
 
