@@ -1,5 +1,6 @@
 from typing import List, Dict
 from portfoliocmsapi.projects.models import Project
+from .client import GitHubClient
 
 
 class GitHubSyncService:
@@ -41,3 +42,68 @@ class GitHubSyncService:
         ]
 
         return available_repos
+
+    def prepare_project_data(self, owner: str, repo_name: str) -> Dict:
+        """
+        Prepares GitHub repository data for project creation by transforming
+        it to match the Project model's structure.
+
+        Args:
+            owner: GitHub username of the repository owner
+            repo_name: Name of the repository
+
+        Returns:
+            Dictionary containing transformed data ready for Project creation
+        """
+        repo_data = self.github_client.get_repository_details(owner, repo_name)
+
+        project_data = {
+            "title": repo_data["name"],
+            "description": repo_data["description"] or "",  # Handle possible None
+            "repo_url": repo_data["html_url"],
+            "date_created": repo_data["created_at"],
+            "last_update": repo_data["updated_at"],
+            "status": "in_development",  # Default status for new projects
+        }
+
+        return project_data
+
+    def sync_project(self, project: Project) -> Project:
+        """
+        Performs a complete synchronization of a project with its GitHub repository data.
+
+        This method updates all GitHub-sourced fields while preserving fields that are
+        managed within the CMS. Think of it like refreshing a webpage - we're getting
+        the latest version of the data while keeping our local customizations.
+
+        Args:
+            project: The Project instance to synchronize with GitHub
+
+        Returns:
+            The updated Project instance
+
+        Note:
+            Fields like status that are managed in the CMS will not be modified.
+            The user, repo_url, and date_created fields are considered immutable
+            and won't be changed even if the GitHub data differs.
+        """
+        # Extract the owner and repo name from the project's repo_url
+        # Example URL: https://github.com/jeremywhitney/portfolio-cms_api
+        repo_parts = project.repo_url.split("/")
+        owner = repo_parts[-2]  # Second to last part is the owner
+        repo_name = repo_parts[-1]  # Last part is the repository name
+
+        # Fetch the latest data from GitHub
+        repo_data = self.github_client.get_repository_details(owner, repo_name)
+
+        # Update only the fields that should be synchronized with GitHub
+        project.title = repo_data["name"]
+        project.description = (
+            repo_data["description"] or ""
+        )  # Handle potential None values
+        project.last_update = repo_data["updated_at"]
+
+        # Save the changes to the database
+        project.save()
+
+        return project
