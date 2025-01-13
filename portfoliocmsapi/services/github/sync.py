@@ -1,6 +1,6 @@
+import requests
 from typing import List, Dict
-from portfoliocmsapi.projects.models import Project
-from .client import GitHubClient
+from portfoliocmsapi.projects.models import Project, TechStack, Tag
 
 
 class GitHubSyncService:
@@ -93,17 +93,55 @@ class GitHubSyncService:
         owner = repo_parts[-2]  # Second to last part is the owner
         repo_name = repo_parts[-1]  # Last part is the repository name
 
-        # Fetch the latest data from GitHub
+        try:
+            # Fetch the latest data from GitHub
+            repo_data = self.github_client.get_repository_details(owner, repo_name)
+
+            # Update only the fields that should be synchronized with GitHub
+            project.title = repo_data["name"]
+            project.description = (
+                repo_data["description"] or ""
+            )  # Handle potential None values
+            project.last_update = repo_data["updated_at"]
+
+            # Save the changes to the database
+            project.save()
+
+            return project
+
+        except requests.exceptions.RequestException as e:
+            raise ValueError(f"Unable to sync project: {str(e)}")
+
+    def sync_repository_languages(self, project: Project) -> None:
+        """
+        Syncs GitHub repository languages with project TechStack items.
+        """
+        # Extract repo information from URL
+        repo_parts = project.repo_url.split("/")
+        owner = repo_parts[-2]
+        repo_name = repo_parts[-1]
+
+        # Get languages from GitHub
+        languages = self.github_client.get_repository_languages(owner, repo_name)
+
+        # Create TechStack items and link them to project
+        for language in languages.keys():
+            tech_stack, _ = TechStack.objects.get_or_create(name=language)
+            project.tech_stack.add(tech_stack)
+
+    def sync_repository_topics(self, project: Project) -> None:
+        """
+        Syncs GitHub repository topics with project Tags.
+        """
+        # Extract repo information from URL
+        repo_parts = project.repo_url.split("/")
+        owner = repo_parts[-2]
+        repo_name = repo_parts[-1]
+
+        # Get repo details which include topics
         repo_data = self.github_client.get_repository_details(owner, repo_name)
 
-        # Update only the fields that should be synchronized with GitHub
-        project.title = repo_data["name"]
-        project.description = (
-            repo_data["description"] or ""
-        )  # Handle potential None values
-        project.last_update = repo_data["updated_at"]
-
-        # Save the changes to the database
-        project.save()
-
-        return project
+        # Create Tags and link them to project
+        for topic in repo_data["topics"]:
+            tag, _ = Tag.objects.get_or_create(name=topic)
+            project.tag.add(tag)

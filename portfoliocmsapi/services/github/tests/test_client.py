@@ -72,6 +72,23 @@ class TestGitHubClient:
         assert "created_at" in repo
 
     @patch("requests.Session.get")
+    def test_get_repository_languages(self, mock_get):
+        """Tests fetching language statistics for a repository"""
+        mock_languages = {"Python": 33495, "Shell": 248}
+        mock_get.return_value.json.return_value = mock_languages
+        mock_get.return_value.status_code = 200
+
+        languages = self.client.get_repository_languages(
+            self.test_owner, self.test_repo
+        )
+
+        assert languages == mock_languages
+        mock_get.assert_called_once_with(
+            f"{self.client.base_url}/repos/{self.test_owner}/{self.test_repo}/languages",
+            headers=self.client.session.headers,
+        )
+
+    @patch("requests.Session.get")
     def test_rate_limit_handling(self, mock_get):
         """Tests that the client properly checks and handles API rate limits"""
         mock_rate_limit = {

@@ -91,6 +91,17 @@ class GitHubClient:
         response.raise_for_status()  # This will raise an exception for HTTP errors
         return response.json()
 
+    def get_repository_languages(self, owner: str, repo: str) -> dict:
+        """
+        Fetches language statistics for a repository.
+        """
+        response = self.session.get(
+            f"{self.base_url}/repos/{owner}/{repo}/languages",
+            headers=self.session.headers,
+        )
+        response.raise_for_status()
+        return response.json()
+
     def check_rate_limit(self) -> dict:
         """
         Checks the current rate limit status for the GitHub API.

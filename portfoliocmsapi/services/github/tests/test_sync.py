@@ -1,6 +1,5 @@
-import pytest
 from django.contrib.auth.models import User
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from portfoliocmsapi.services.github.sync import GitHubSyncService
 from portfoliocmsapi.projects.models import Project
 
@@ -126,3 +125,66 @@ class TestGitHubSyncService:
         assert updated_project.repo_url == initial_project.repo_url
         assert updated_project.date_created == initial_project.date_created
         assert updated_project.user == test_user
+
+    def test_sync_repository_languages(self, db):
+        """
+        Tests that GitHub repository languages are correctly converted into TechStack items.
+        """
+        # Create test user and project
+        test_user = User.objects.create_user(username="testuser", password="testpass")
+        project = Project.objects.create(
+            user=test_user,
+            title="Test Project",
+            description="Test description",
+            repo_url="https://github.com/jeremywhitney/portfolio-cms_api",
+            date_created="2024-01-01T00:00:00Z",
+            last_update="2024-01-02T00:00:00Z",
+        )
+
+        # Mock GitHub API response with language data
+        mock_languages = {"Python": 33495, "JavaScript": 5000, "HTML": 2000}
+        self.github_client.get_repository_languages.return_value = mock_languages
+
+        # Sync languages to TechStack
+        self.sync_service.sync_repository_languages(project)
+
+        # Verify TechStack items were created and linked to project
+        project_tech_stack = project.tech_stack.all()
+        tech_stack_names = {tech.name for tech in project_tech_stack}
+
+        assert "Python" in tech_stack_names
+        assert "JavaScript" in tech_stack_names
+        assert "HTML" in tech_stack_names
+
+    def test_sync_repository_topics(self, db):
+        """
+        Tests that GitHub repository topics are correctly converted into Tags.
+        """
+        # Create test user and project
+        test_user = User.objects.create_user(username="testuser", password="testpass")
+        project = Project.objects.create(
+            user=test_user,
+            title="Test Project",
+            description="Test description",
+            repo_url="https://github.com/jeremywhitney/portfolio-cms_api",
+            date_created="2024-01-01T00:00:00Z",
+            last_update="2024-01-02T00:00:00Z",
+        )
+
+        # Mock GitHub API response with topic data
+        mock_repo_data = {
+            "name": "portfolio-cms_api",
+            "topics": ["portfolio", "django", "rest-api"],
+        }
+        self.github_client.get_repository_details.return_value = mock_repo_data
+
+        # Sync topics to Tags
+        self.sync_service.sync_repository_topics(project)
+
+        # Verify Tags were created and linked to project
+        project_tags = project.tag.all()
+        tag_names = {tag.name for tag in project_tags}
+
+        assert "portfolio" in tag_names
+        assert "django" in tag_names
+        assert "rest-api" in tag_names
