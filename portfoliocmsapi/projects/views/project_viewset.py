@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from ..models import Project, Tag, TechStack
-from ..serializers.project_serializer import ProjectSerializer
+from ..serializers import ProjectSerializer, GitHubRepositorySerializer
 from ...utils import CreateRelationshipMixin, UpdateRelationshipMixin
 from ...services.github import GitHubClient, GitHubSyncService
 
@@ -28,4 +28,5 @@ class ProjectViewSet(
         Lists GitHub repositories that aren't already linked to projects.
         """
         available_repos = self.sync_service.get_available_repositories()
-        return Response(available_repos)
+        serializer = GitHubRepositorySerializer(available_repos, many=True)
+        return Response(serializer.data)
