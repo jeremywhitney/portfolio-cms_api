@@ -27,6 +27,11 @@ class ProjectSerializer(serializers.ModelSerializer):
             "date_created",
             "last_update",
         ]
+        read_only_fields = []
+        extra_kwargs = {
+            "date_created": {"read_only": False, "required": True},
+            "last_update": {"read_only": False, "required": True},
+        }
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
