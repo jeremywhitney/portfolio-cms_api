@@ -61,3 +61,28 @@ class ProjectViewSet(
         self.sync_service.sync_repository_topics(project)
 
         return Response(self.get_serializer(project).data, status=201)
+
+    @action(methods=["put"], detail=True, url_path="sync")
+    def sync_project(self, request, pk=None):
+        """
+        Syncs an existing project with its GitHub repository data.
+        """
+        project = self.get_object()
+
+        # Extract owner and repo name from the project's repo_url
+        owner, repo_name = self.sync_service._get_repo_info(project.repo_url)
+
+        # Get updated project data from GitHub
+        project_data = self.sync_service.prepare_project_data(owner, repo_name)
+
+        # Update only the fields that should be synced from GitHub
+        project.title = project_data["title"]
+        project.description = project_data["description"]
+        project.last_update = project_data["last_update"]
+        project.save()
+
+        # Update tech stack and tags
+        self.sync_service.sync_repository_languages(project)
+        self.sync_service.sync_repository_topics(project)
+
+        return Response(self.get_serializer(project).data)

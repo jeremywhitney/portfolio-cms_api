@@ -59,11 +59,11 @@ class GitHubSyncService:
 
         project_data = {
             "title": repo_data["name"],
-            "description": repo_data["description"] or "",  # Handle possible None
+            "description": repo_data["description"] or "",
             "repo_url": repo_data["html_url"],
             "date_created": repo_data["created_at"],
             "last_update": repo_data["updated_at"],
-            "status": "in_development",  # Default status for new projects
+            "status": "in_development",
         }
 
         return project_data
@@ -112,36 +112,38 @@ class GitHubSyncService:
         except requests.exceptions.RequestException as e:
             raise ValueError(f"Unable to sync project: {str(e)}")
 
+    def _get_repo_info(self, repo_url: str) -> tuple[str, str]:
+        """
+        Extracts owner and repository name from GitHub URL.
+        """
+        repo_parts = repo_url.split("/")
+        return repo_parts[-2], repo_parts[-1]
+
     def sync_repository_languages(self, project: Project) -> None:
         """
         Syncs GitHub repository languages with project TechStack items.
         """
-        # Extract repo information from URL
-        repo_parts = project.repo_url.split("/")
-        owner = repo_parts[-2]
-        repo_name = repo_parts[-1]
-
-        # Get languages from GitHub
+        owner, repo_name = self._get_repo_info(project.repo_url)
         languages = self.github_client.get_repository_languages(owner, repo_name)
 
         # Create TechStack items and link them to project
         for language in languages.keys():
-            tech_stack, _ = TechStack.objects.get_or_create(name=language)
+            tech_stack = TechStack.objects.filter(name__iexact=language).first()
+            if not tech_stack:
+                tech_stack = TechStack.objects.create(name=language)
             project.tech_stack.add(tech_stack)
 
     def sync_repository_topics(self, project: Project) -> None:
         """
         Syncs GitHub repository topics with project Tags.
         """
-        # Extract repo information from URL
-        repo_parts = project.repo_url.split("/")
-        owner = repo_parts[-2]
-        repo_name = repo_parts[-1]
-
-        # Get repo details which include topics
+        owner, repo_name = self._get_repo_info(project.repo_url)
         repo_data = self.github_client.get_repository_details(owner, repo_name)
 
         # Create Tags and link them to project
         for topic in repo_data["topics"]:
-            tag, _ = Tag.objects.get_or_create(name=topic)
+            formatted_name = topic.title()
+            tag = Tag.objects.filter(name__iexact=formatted_name).first()
+            if not tag:
+                tag = Tag.objects.create(name=formatted_name)
             project.tag.add(tag)

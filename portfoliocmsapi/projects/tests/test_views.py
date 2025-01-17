@@ -103,4 +103,72 @@ class TestProjectViewSetGitHub(APITestCase):
 
             # Verify TechStack and Tag relationships
             assert project.tech_stack.filter(name="Python").exists()
-            assert project.tag.filter(name__in=["django", "api"]).count() == 2
+            assert project.tag.filter(name__in=["Django", "Api"]).count() == 2
+
+    def test_sync_project_with_github(self):
+        """
+        Tests syncing an existing project with updated GitHub repository data.
+        """
+        # Create a project with initial data
+        self.client.force_authenticate(user=self.user)
+        project = Project.objects.create(
+            user=self.user,
+            title="Old Title",
+            description="Old description",
+            repo_url="https://github.com/testuser/test-repo",
+            date_created="2024-01-01 00:00:00+00:00",
+            last_update="2024-01-02 00:00:00+00:00",
+            status="completed",  # This should remain unchanged after sync
+        )
+
+        # Mock updated repository data
+        updated_repo = {
+            "name": "test-repo",
+            "description": "Updated description",
+            "html_url": "https://github.com/testuser/test-repo",
+            "language": "Python",
+            "topics": ["django", "api"],
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-05T00:00:00Z",  # Note the newer timestamp
+        }
+
+        # Mock the updated languages data
+        updated_languages = {"Python": 50000, "JavaScript": 10000}
+
+        with patch("requests.Session.get") as mock_get:
+
+            def mock_response(*args, **kwargs):
+                mock = Mock()
+                mock.status_code = 200
+                if "languages" in args[0]:
+                    mock.json.return_value = updated_languages
+                else:
+                    mock.json.return_value = updated_repo
+                return mock
+
+            mock_get.side_effect = mock_response
+
+            # Make the sync request
+            response = self.client.put(
+                f"/api/projects/{project.id}/sync", format="json"
+            )
+
+            # Verify the response and updates
+            assert response.status_code == 200
+
+            # Refresh project from database
+            project.refresh_from_db()
+
+            # Verify fields were updated
+            assert project.description == "Updated description"
+            assert str(project.last_update) == "2024-01-05 00:00:00+00:00"
+
+            # Verify relationships were updated
+            assert project.tech_stack.filter(name="Python").exists()
+            assert project.tech_stack.filter(name="JavaScript").exists()
+            assert project.tag.filter(name="Django").exists()
+            assert project.tag.filter(name="Api").exists()
+
+            # Verify certain fields remained unchanged
+            assert project.status == "completed"
+            assert str(project.date_created) == "2024-01-01 00:00:00+00:00"

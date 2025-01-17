@@ -185,6 +185,6 @@ class TestGitHubSyncService:
         project_tags = project.tag.all()
         tag_names = {tag.name for tag in project_tags}
 
-        assert "portfolio" in tag_names
-        assert "django" in tag_names
-        assert "rest-api" in tag_names
+        assert "Portfolio" in tag_names
+        assert "Django" in tag_names
+        assert "Rest-Api" in tag_names
